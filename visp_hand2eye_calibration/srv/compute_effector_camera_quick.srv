@@ -5,3 +5,4 @@ visp_hand2eye_calibration/TransformArray camera_object
 visp_hand2eye_calibration/TransformArray world_effector
 ---
 geometry_msgs/Transform effector_camera
+geometry_msgs/Transform world_object

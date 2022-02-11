@@ -133,6 +133,21 @@ namespace visp_hand2eye_calibration
     geometry_msgs::Transform trans;
     trans = visp_bridge::toGeometryMsgsTransform(eMc);
     res.effector_camera = trans;
+
+    // Compute average wMo pose
+    unsigned int nbPose = (unsigned int) cMo_vec.size();
+    std::vector<vpTranslationVector> rTo(nbPose);
+    std::vector<vpRotationMatrix> rRo(nbPose);
+    for (unsigned int i = 0; i < nbPose; i++) {
+      vpHomogeneousMatrix rMo = wMe_vec[i] * eMc * cMo_vec[i];
+      rRo[i] = rMo.getRotationMatrix();
+      rTo[i] = rMo.getTranslationVector();
+    }
+    vpRotationMatrix meanRot = vpRotationMatrix::mean(rRo);
+    vpTranslationVector meanTrans = vpTranslationVector::mean(rTo);
+    vpHomogeneousMatrix meanwMo(meanTrans, meanRot);
+    res.world_object = visp_bridge::toGeometryMsgsTransform(meanwMo);
+
     return true;
   }
 
